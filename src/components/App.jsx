@@ -4,7 +4,7 @@ import fetchImages from 'services/api';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
 import Loader from './Loader';
-import { Container } from './App.styled';
+import { Container, ErrorMessage } from './App.styled';
 
 class App extends Component {
   state = {
@@ -65,7 +65,7 @@ class App extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
   reset = () => {
-    this.setState({ page: 1, images: [] });
+    this.setState({ page: 1, images: [], totalHits: 0 });
   };
 
   render() {
@@ -78,7 +78,7 @@ class App extends Component {
           <Button type="button" label="Load more" changePage={this.loadMore} />
         )}
         {loading && <Loader />}
-        {error && <p>{error}</p>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </Container>
     );
   }
