@@ -1,9 +1,10 @@
 import { Component } from 'react';
-import SearchBar from './SearchBar/SearchBar';
+import SearchBar from './SearchBar';
 import fetchImages from 'services/api';
-import ImageGallery from './ImageGallery/ImageGallery';
-import Button from './Button/Button';
-import Loader from './Loader/Loader';
+import ImageGallery from './ImageGallery';
+import Button from './Button';
+import Loader from './Loader';
+import { Container } from './App.styled';
 
 class App extends Component {
   state = {
@@ -50,7 +51,6 @@ class App extends Component {
           totalHits,
         }));
       }
-      console.log(this.state.images);
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
@@ -71,7 +71,7 @@ class App extends Component {
   render() {
     const { images, loading, error, totalHits } = this.state;
     return (
-      <div>
+      <Container>
         <SearchBar onSubmit={this.handleSearchFormSubmit} />
         {images.length > 0 && <ImageGallery items={images} />}
         {totalHits > 12 && (
@@ -79,7 +79,7 @@ class App extends Component {
         )}
         {loading && <Loader />}
         {error && <p>{error}</p>}
-      </div>
+      </Container>
     );
   }
 }

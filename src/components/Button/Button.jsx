@@ -1,9 +1,18 @@
+import { LoadMoreBtn } from './Button.styled';
+import PropTypes from 'prop-types';
+
 const Button = ({ type, label, changePage }) => {
   return (
-    <button type={type} onClick={changePage}>
+    <LoadMoreBtn type={type} onClick={changePage}>
       {label}
-    </button>
+    </LoadMoreBtn>
   );
+};
+
+Button.propTypes = {
+  changePage: PropTypes.func.isRequired,
+  type: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
 };
 
 export default Button;
