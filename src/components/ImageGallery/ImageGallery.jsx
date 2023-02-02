@@ -13,7 +13,13 @@ const ImageGallery = ({ items }) => {
 };
 
 ImageGallery.propTypes = {
-  items: PropTypes.array.isRequired,
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      largeImageURL: PropTypes.string.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default ImageGallery;
