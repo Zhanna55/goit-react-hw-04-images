@@ -74,7 +74,7 @@ class App extends Component {
       <Container>
         <SearchBar onSubmit={this.handleSearchFormSubmit} />
         {images.length > 0 && <ImageGallery items={images} />}
-        {totalHits > 12 && (
+        {images.length < totalHits && (
           <Button type="button" label="Load more" changePage={this.loadMore} />
         )}
         {loading && <Loader />}
