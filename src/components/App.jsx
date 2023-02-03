@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import fetchImages from 'services/api';
 import ImageGallery from './ImageGallery';
@@ -6,82 +6,74 @@ import Button from './Button';
 import Loader from './Loader';
 import { Container, ErrorMessage } from './App.styled';
 
-class App extends Component {
-  state = {
-    query: '',
-    images: [],
-    page: 1,
-    totalHits: 0,
-    loading: false,
-    error: null,
-  };
+function App() {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalHits, setTotalHits] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
-    if (prevState.query !== query) {
-      this.reset();
-      this.getImages();
+  useEffect(() => {
+    if (!query) {
+      return;
     }
-    if (prevState.page !== page) {
-      this.getImages();
-    }
-  }
 
-  async getImages() {
-    try {
-      this.setState({ loading: true, error: null });
-      const { query, page } = this.state;
-      const { hits, totalHits } = await fetchImages(query, page);
-      const imgArr = hits.map(({ id, largeImageURL, webformatURL, tags }) => {
-        return { id, largeImageURL, webformatURL, tags };
-      });
+    async function getImages() {
+      try {
+        setLoading(true);
+        setError(null);
+        const { hits, totalHits } = await fetchImages(query, page);
+        const imgArr = hits.map(({ id, largeImageURL, webformatURL, tags }) => {
+          return { id, largeImageURL, webformatURL, tags };
+        });
 
-      if (query.trim() === '') {
-        this.setState({
-          error: 'You cannot search by empty field, try again.',
-        });
-      } else if (hits.length === 0) {
-        this.setState({
-          error:
-            'Sorry, there are no images matching your search query. Please try again.',
-        });
-      } else {
-        this.setState(prevState => ({
-          images: [...prevState.images, ...imgArr],
-          totalHits,
-        }));
+        if (query.trim() === '') {
+          setError('You cannot search by empty field, try again.');
+        } else if (hits.length === 0) {
+          setError(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
+        } else {
+          setImages(images => [...images, ...imgArr]);
+          setTotalHits(totalHits);
+        }
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({ loading: false });
     }
-  }
+    getImages();
+  }, [query, page]);
 
-  handleSearchFormSubmit = query => {
-    this.setState({ query });
+  useEffect(() => {
+    reset();
+  }, [query]);
+
+  const handleSearchFormSubmit = query => {
+    setQuery(query);
   };
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const loadMore = () => {
+    setPage(page => page + 1);
   };
-  reset = () => {
-    this.setState({ page: 1, images: [], totalHits: 0 });
+  const reset = () => {
+    setPage(1);
+    setImages([]);
+    setTotalHits(0);
   };
 
-  render() {
-    const { images, loading, error, totalHits } = this.state;
-    return (
-      <Container>
-        <SearchBar onSubmit={this.handleSearchFormSubmit} />
-        {images.length > 0 && <ImageGallery items={images} />}
-        {images.length < totalHits && (
-          <Button type="button" label="Load more" changePage={this.loadMore} />
-        )}
-        {loading && <Loader />}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </Container>
-    );
-  }
+  return (
+    <Container>
+      <SearchBar onSubmit={handleSearchFormSubmit} />
+      {images.length > 0 && <ImageGallery items={images} />}
+      {images.length < totalHits && (
+        <Button type="button" label="Load more" changePage={loadMore} />
+      )}
+      {loading && <Loader />}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+    </Container>
+  );
 }
 
 export default App;
