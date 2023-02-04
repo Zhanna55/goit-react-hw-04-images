@@ -20,6 +20,7 @@ const Modal = ({ image, onClose }) => {
       onClose();
     }
   };
+
   const { largeImageURL, tags } = image;
   return (
     <Overlay onClick={onBackDropClick}>

@@ -1,14 +1,9 @@
-// import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'components/Modal';
 import { ImageItem, Image } from './ImageGalleryItem.styled';
 import { useModal } from './../../hooks/useModal';
 
 const ImageGalleryItem = ({ item }) => {
-  // const [shownModal, setShownModal] = useState(false);
-  // const onModal = () => {
-  //   setShownModal(shownModal => !shownModal);
-  // };
   const { isModalOpen, closeModal, openModal } = useModal();
   const { webformatURL, tags } = item;
 
